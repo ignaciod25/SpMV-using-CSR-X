@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <cstdio>
+#include <memory>
 
 using namespace std;
 
