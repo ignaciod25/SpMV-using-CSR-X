@@ -3,11 +3,9 @@
 #include "sparse_matrices.h"
 
 using namespace std;
-
+/* vector functions in vector.cpp */
 // functions to initialize a vector
-Vector* GenerateRandVect(int size);
-Vector* CreateVectorFromFile(char* filename);
+vector<int> GenerateRandVect(int size);
+vector<int> CreateVectorFromFile(char* filename);
 // write to vector to file
-void    WriteVectorToFile(Vector* v, char* filename);
-// function to free memory allocated for vector
-void    free_vector(Vector* v);
+void WriteVectorToFile(vector<int> v, char* filename);
