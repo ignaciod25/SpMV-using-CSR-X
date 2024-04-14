@@ -15,18 +15,19 @@ typedef struct CSR {
 } CSRMatrix;
 
 // 
-typedef struct LIL_Node {
+typedef struct LILNode {
     int row;
     int col;
     double value;
-    LILNode* next;  // will point to next node in the same row
+    struct LILNode* next;  // will point to next node in the same row
 } LILNode;
 
-typedef struct LIL {
+typedef struct LILMATRIX {
     LIL_Node** rows; // list of rows made up of nodes
     int num_rows;
     int num_cols;
-    int num_nonzeros;  
+    int num_nonzeros;
+    LILNode* data;  
 } LILMatrix;
 
 // struct for storing vector
@@ -47,7 +48,9 @@ void free_csr_matrix(CSRMatrix* matrix);
 LILMatrix* lil_matrix_create(int rows, int cols); 
 
 // function to free memory allocated for LIL matrix
-void free_lil_matrix(LILMatrix *matrix);
+void free_lil_matrix(LILMatrix* matrix);
+double* spmv_lil(LILMatrix* matrix, double* vector);
+
 
 /* vector functions in vector.cpp */
 // functions to initialize a vector
