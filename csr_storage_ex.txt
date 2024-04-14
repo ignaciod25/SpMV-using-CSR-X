@@ -1,0 +1,44 @@
+See file "sample_matrix10.txt"
+
+1)
+    row_ptr : 
+    0   0   0   0   0   0   0   0   0   0   0
+
+2)  
+    row = 1, col = 2, val = 1.2
+    row_ptr : 
+    0   0   1   1   1   1   1   1   1   1   1
+    
+    idx = 0
+    col_idx : 
+    2
+    values : 
+    1.2
+
+3)
+    row = 0, col = 9, val = 0.9
+    row_ptr : 
+    0   1   2   2   2   2   2   2   2   2   2
+    
+    idx = 0
+    col_idx :
+    9   2
+    values :
+    0.9     1.2
+
+4) 
+    row = 9, col = 9, val = 9.9
+    row_ptr : 
+    0   1   2   2   2   2   2   2   2   2   3
+
+    idx = 2
+    col_idx : 
+    9   2   9
+    values :
+    0.9     1.2     9.9 
+
+5) 
+    row = 5, col = 4, val = 54
+    
+
+    

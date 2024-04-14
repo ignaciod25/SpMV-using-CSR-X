@@ -34,7 +34,7 @@ typedef struct LILMATRIX {
 /* CSR matrix functions in csr_matrix.cpp */
 // function to initialize a CSR matrix
 CSRMatrix* csr_matrix_create(char* filename); // create matrix from mtx file
-
+void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
 
 // function to initialize an LIL matrix
 LILMatrix* lil_matrix_create(int rows, int cols); 
@@ -46,10 +46,9 @@ double* spmv_lil(LILMatrix* matrix, double* vector);
 
 /* vector functions in vector.cpp */
 // functions to initialize a vector
-vector<int> GenerateRandVect(int size);
-vector<int> CreateVectorFromFile(char* filename);
+vector<double> CreateVectorFromFile(char* filename);
 // write to vector to file
-void WriteVectorToFile(vector<int> v, char* filename);
+void WriteVectorToFile(vector<double> v, char* filename);
 
 
 #endif
