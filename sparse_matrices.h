@@ -6,7 +6,7 @@
 using namespace std;
 
 // csr struct
-typedef struct CSR {
+typedef struct CSRMATRIX {
     vector<int> row_ptr;       // array of locations (indices) of first nonzero element of each row
     vector<int> col_idx;       // column index of nonzero elements
     vector<double> values;     // nonzero elements
