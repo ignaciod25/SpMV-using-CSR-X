@@ -21,7 +21,7 @@ CSRMatrix* csr_matrix_create(char* filename) {
 
     #ifdef DEBUG
     cout << banner << endl;
-    #endif;
+    #endif
 
     fin >> total_rows >> total_cols >> entries;
     
