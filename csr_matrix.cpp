@@ -4,9 +4,17 @@
 #include <omp.h>
 #include <pthread.h>
 #include "sparse_matrices.h"
-#include <bits/semaphore.h>
 
 using namespace std;
+
+/* Global Variable for pthread functions */
+long num_threads;
+CSRMatrix* csrm_global_ptr;
+vector<double>* vp;
+vector<double>* result_ptr;
+int* flags;
+long tasks_per_thread;
+long leftovers;
 
 /* List of functions */
 CSRMatrix* csr_matrix_create(char* filename);
@@ -14,15 +22,6 @@ void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
 void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
 void* ThreadRoutine(void* rank);
 void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
-
-/* Global Variable for pthread functions */
-long num_threads;
-CSRMatrix* csrm_global_ptr;
-vector<double>* vp;
-vector<double>* result_ptr;
-sem_t* sems;
-long tasks_per_thread;
-long leftovers;
 
 CSRMatrix* csr_matrix_create(char* filename) {
     CSRMatrix* csrm;
@@ -198,9 +197,14 @@ void* ThreadRoutine(void* rank) {
         for (j=csrm_global_ptr->row_ptr[i]; j<csrm_global_ptr->row_ptr[i+1]; j++) {
             col = csrm_global_ptr->col_idx[j];
             val = csrm_global_ptr->values[j];
+
+            while (flags[row] != 0);
+            flags[row] = 1;
             result_ptr->at(row) += val * vp->at(col);
+            flags[row] = 0;
 
             #ifdef DEBUG
+            cout << "thread rank: " << my_rank << endl;
             cout << row << "   " << col << "   " << val << endl;
             #endif
         }
@@ -221,6 +225,9 @@ void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
     csrm_global_ptr = csrm;
     vp = &v;
     total_rows  = csrm->num_rows;
+    flags = new int[total_rows];
+    for (int i=0; i<total_rows; i++)
+        flags[i] = 0;
 
     entries = csrm_global_ptr->num_nonzeros;
     leftovers = entries % num_threads;
@@ -239,6 +246,7 @@ void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
     for (auto i: *result_ptr) {
         fout << i << endl;
     }
-    
     fout.close();
+
+    delete[] flags;
 }
