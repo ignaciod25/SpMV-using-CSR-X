@@ -48,8 +48,7 @@ double* spmv_lil(LILMatrix* matrix, double* vector);
 /* vector functions in vector.cpp */
 // functions to initialize a vector
 vector<double> CreateVectorFromFile(char* filename);
-// write to vector to file
-void WriteVectorToFile(vector<double> v, char* filename);
-
+// create random vector and print to file in vectors/ directory
+vector<double> CreateRandomVector(int size, char* outfile);
 
 #endif

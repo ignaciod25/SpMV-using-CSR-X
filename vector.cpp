@@ -2,21 +2,23 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
+#include <bits/stdc++.h> 
 #include "sparse_matrices.h"
 
 using namespace std;
+
 /* vector functions in vector.cpp */
 // functions to initialize a vector
 vector<double> CreateVectorFromFile(char* filename);
-// write to vector to file
-void WriteVectorToFile(vector<double> v, char* filename);
-
+// create random vector and print to file in vectors/ directory
+vector<double> CreateRandomVector(int size, char* outfile);
 
 vector<double> CreateVectorFromFile(char* filename) {
     vector<double> v;
-    ifstream fin(filename);
+    ifstream fin;
     double val;
 
+    fin.open(filename);
     while (fin >> val) {
         v.push_back(val);
     }
@@ -28,3 +30,25 @@ vector<double> CreateVectorFromFile(char* filename) {
 
     return v;
 } /* vector<int> CreateVectorFromFile */
+
+vector<double> CreateRandomVector(int size, char* outfile) {
+    vector<double> v;
+    ofstream fout;
+    string path("vectors/");
+    path.append(string(outfile));
+    const char* out = path.c_str();
+
+    v.reserve(size);
+    v.assign(size, 0.0);
+    srand(time(0));
+    
+    fout.open(out);
+    for (int i=0; i<v.size(); i++) {
+        v[i] = rand() % 1000;
+        fout << v[i] << endl;
+    }
+    fout.close();
+
+    return v;
+
+} /* vector<double> CreateRandomVector */
