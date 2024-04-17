@@ -1,1 +1,1 @@
-# SpMV-using-CSR-and-LIL
+# SpMV-using-CSR-and-ELL
