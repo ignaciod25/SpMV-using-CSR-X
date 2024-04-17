@@ -43,7 +43,7 @@ vector<double> CreateRandomVector(int size, char* outfile) {
     srand(time(0));
     
     fout.open(out);
-    for (int i=0; i<v.size(); i++) {
+    for (int i=0; i<size; i++) {
         v[i] = rand() % 1000;
         fout << v[i] << endl;
     }
