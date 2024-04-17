@@ -1,0 +1,13 @@
+This is the expected result from spmv done with values from
+sample_matrix10.txt and sample_vector10.txt
+
+16.2
+3.6
+0
+381
+0
+291.2
+252
+471.6
+89
+99

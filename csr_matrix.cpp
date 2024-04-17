@@ -8,6 +8,7 @@ using namespace std;
 /* List of functions */
 CSRMatrix* csr_matrix_create(char* filename);
 void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
+void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output);
 
 CSRMatrix* csr_matrix_create(char* filename) {
     CSRMatrix* csrm;
@@ -63,9 +64,6 @@ CSRMatrix* csr_matrix_create(char* filename) {
         row--;
         col--;
 
-        #ifdef DEBUG
-        cout << row << "  " << col << "  " << val << endl;
-        #endif
         for (int r=row+1; r<total_rows+1; r++) 
             csrm->row_ptr[r]++;
         
@@ -89,11 +87,6 @@ CSRMatrix* csr_matrix_create(char* filename) {
 
         idx = csrm->row_ptr[row] + row_num_values[row] - 1;
 
-        #ifdef DEBUG
-        cout << row << "  " << col << "  " << val << endl;
-        cout << idx << endl;
-        #endif
-
         csrm->col_idx[idx] = col;
         csrm->values[idx] = val;
 
@@ -102,34 +95,42 @@ CSRMatrix* csr_matrix_create(char* filename) {
     }
     
     return csrm;
-} /* csr_matrix_create */
+} /* CSRMatrix* csr_matrix_create */
 
 void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output) {
     int row, col;
     double val;
-    int total_rows, entries;
+    int total_rows;
     vector<double> result;
     ofstream fout;
 
     total_rows  = csrm->num_rows;
-    entries     = csrm->num_nonzeros;
 
     result.reserve(total_rows);
     result.assign(total_rows, 0.0);
 
     for (int i=0; i<total_rows; i++) {
         row = i;
-        for (int j=0; j<csrm->row_ptr[i+1]; j++) {
+        for (int j=csrm->row_ptr[i]; j<csrm->row_ptr[i+1]; j++) {
             col = csrm->col_idx[j];
             val = csrm->values[j];
             result[row] += val * v[col];
+
+            #ifdef DEBUG
+            cout << row << "   " << col << "   " << val << endl;
+            #endif
         }
     }
 
     fout.open(output);
-    for (auto i: result)
+    for (auto i: result) {
         fout << i << endl;
+    }
     
     fout.close();
 
 } /* void csr_serial_spmv */
+
+void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output) {
+
+} /* void csr_omp_spmv*/

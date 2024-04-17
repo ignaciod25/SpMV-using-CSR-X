@@ -33,8 +33,9 @@ typedef struct LILMATRIX {
 
 /* CSR matrix functions in csr_matrix.cpp */
 // function to initialize a CSR matrix
-CSRMatrix* csr_matrix_create(char* filename); // create matrix from mtx file
+CSRMatrix* csr_matrix_create(char* filename); // create matrix from mtx file, will need to delete matrix ptr after creation
 void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
+void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output);
 
 // function to initialize an LIL matrix
 LILMatrix* lil_matrix_create(int rows, int cols); 

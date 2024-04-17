@@ -1,14 +1,14 @@
 /* 
-    Compile:    g++ -g -Wall csr_spmv.cpp csr_matrix.cpp vector.cpp -o csr_test
+    Compile:    g++ -g -Wall csr_main.cpp csr_matrix.cpp vector.cpp -o csr_test
     Run:        ./csr_test <matrix file> <vector file> <output file>
+    Flags:      -DDEBUG prints labels as processes occur within the program
+                
 */
 
 #include "sparse_matrices.h"
 #include <iostream>
 #include <fstream>
 #include <string>
-
-// #ifdef CSR_MAIN
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
@@ -31,11 +31,15 @@ int main(int argc, char* argv[]) {
         while (j<csrm->row_ptr[i+1]) {
             col = csrm->col_idx[j];
             val = csrm->values[j];
+            #ifdef DEBUG
             printf("%d, %d, %lg\n", row, col, val);
+            #endif
             j++;
         }  
         i++;
     }
+
+    #ifdef DEBUG
     cout << "size of matrix (num rows/cols): " << csrm->num_rows << endl;
     cout << "size of vector: " << v.size() << endl;
 
@@ -44,6 +48,8 @@ int main(int argc, char* argv[]) {
         cout << i << ", ";
     cout << endl;
 
+    cout << "performing serial spmv.................." << endl;
+    #endif
     csr_serial_spmv(csrm, v, argv[3]);
 
     delete csrm;
@@ -51,4 +57,3 @@ int main(int argc, char* argv[]) {
     return 0;
 } /* int main */
 
-// #endif
