@@ -2,14 +2,27 @@
 #include <fstream>
 #include <string>
 #include <omp.h>
+#include <pthread.h>
 #include "sparse_matrices.h"
+#include <bits/semaphore.h>
 
 using namespace std;
 
 /* List of functions */
 CSRMatrix* csr_matrix_create(char* filename);
 void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
-void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long num_threads);
+void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
+void* ThreadRoutine(void* rank);
+void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
+
+/* Global Variable for pthread functions */
+long num_threads;
+CSRMatrix* csrm_global_ptr;
+vector<double>* vp;
+vector<double>* result_ptr;
+sem_t* sems;
+long tasks_per_thread;
+long leftovers;
 
 CSRMatrix* csr_matrix_create(char* filename) {
     CSRMatrix* csrm;
@@ -132,7 +145,7 @@ void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output) {
 
 } /* void csr_serial_spmv */
 
-void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long num_threads) {
+void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count) {
     int row, col, i, j;
     double val;
     int total_rows;
@@ -144,7 +157,7 @@ void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long num_thre
     result.reserve(total_rows);
     result.assign(total_rows, 0.0);
 
-    omp_set_num_threads(num_threads);
+    omp_set_num_threads(thread_count);
     #pragma omp parallel for private(i, j, row, col, val)
     for (i=0; i<total_rows; i++) {
         row = i;
@@ -167,3 +180,65 @@ void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long num_thre
     fout.close();
 
 } /* void csr_omp_spmv*/
+
+void* ThreadRoutine(void* rank) {
+    long my_rank = (long) rank;
+    int i, j, total_rows;
+    int first_i, last_i;
+    int row, col;
+    double val;
+
+    first_i = my_rank * tasks_per_thread;
+    last_i = first_i + tasks_per_thread;
+
+    if (last_i > (csrm_global_ptr->num_nonzeros - leftovers)) last_i++;
+
+    for (i=first_i; i<last_i; i++) {
+        row = i;
+        for (j=csrm_global_ptr->row_ptr[i]; j<csrm_global_ptr->row_ptr[i+1]; j++) {
+            col = csrm_global_ptr->col_idx[j];
+            val = csrm_global_ptr->values[j];
+            result_ptr->at(row) += val * vp->at(col);
+
+            #ifdef DEBUG
+            cout << row << "   " << col << "   " << val << endl;
+            #endif
+        }
+    }
+
+} /* void* ThreadRoutine */
+
+void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count) {
+    int row, col, i, j;
+    double val;
+    int total_rows;
+    long entries;
+    ofstream fout;
+    long thread;
+
+    num_threads = thread_count;
+    pthread_t thread_handles[num_threads];
+    csrm_global_ptr = csrm;
+    vp = &v;
+    total_rows  = csrm->num_rows;
+
+    entries = csrm_global_ptr->num_nonzeros;
+    leftovers = entries % num_threads;
+    tasks_per_thread = entries / num_threads;
+
+    result_ptr->reserve(total_rows);
+    result_ptr->assign(total_rows, 0.0);
+
+    for (thread=0; thread<num_threads; thread++) 
+        pthread_create(&thread_handles[thread], NULL, ThreadRoutine, (void*) thread);
+
+    for (thread=0; thread<num_threads; thread++)
+        pthread_join(thread_handles[thread], NULL);
+
+    fout.open(output);
+    for (auto i: *result_ptr) {
+        fout << i << endl;
+    }
+    
+    fout.close();
+}
