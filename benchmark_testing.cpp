@@ -24,6 +24,8 @@ int main() {
     });
 
     vector<double> v;
+    CSRMatrix** csrms = (CSRMatrix**)malloc(sizeof(CSRMatrix) * files.size());
+    CSRMatrix* csrm_ptr;
     string file;
     string v_out;
     string out;
@@ -37,9 +39,11 @@ int main() {
     csv_file << "Matrix,Rows,Columns,NNZ,NNZ/Rows,SPMV Function,Thread Count,Time\n";
     // there should be 8 columns in each entry
 
+    int i=0;
     for (auto e: files) {
+        csrm_ptr = csrms[i];
         file = "mtxfiles/" + e;
-        CSRMatrix* csrm_ptr = csr_matrix_create((char*)file.c_str());
+        csrm_ptr = csr_matrix_create((char*)file.c_str());
         num_rows = csrm_ptr->num_rows;
         num_cols = csrm_ptr->num_cols;
         num_nonzeros = csrm_ptr->num_nonzeros;
@@ -111,11 +115,13 @@ int main() {
         csv_file << num_nonzeros << "," << (double)num_nonzeros / num_rows << ",";
         csv_file << "csr_pth_spmv" << "," << 4 << "," << elapsed << "\n";
         
+        delete csrm_ptr;
+        i++;
         
     }
 
     csv_file.close();
-    delete[] csrm_ptr;
+    free(csrms);
 
     return 0;
 }
