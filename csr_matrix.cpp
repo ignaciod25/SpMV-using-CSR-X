@@ -273,8 +273,12 @@ void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
         ret = pthread_join(thread_handles[thread], NULL);
 
     fout.open(output);
-    for (const auto &e : result) fout << e << "\n";
+    for (int i=0; i<total_rows; i++) {
+        #ifdef DEBUG
+        cout << "row: " << i << " val: " << result[i] << endl;
+        #endif
+        fout << result[i] << endl;
+    }
     fout.close();
 
-    // delete[] mutexes;
 }
