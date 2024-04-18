@@ -13,10 +13,10 @@ using namespace std;
 long num_threads;
 CSRMatrix* csrm_global_ptr;
 vector<double>* vp;
-vector<double>* result_ptr;
-int* flags;
-long tasks_per_thread;
-long leftovers;
+vector<double> result;
+int tasks_per_thread;
+int leftovers;
+// pthread_mutex_t* mutexes;
 
 /* List of functions */
 CSRMatrix* csr_matrix_create(char* filename);
@@ -192,32 +192,39 @@ void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
 
 void* ThreadRoutine(void* rank) {
     long my_rank = (long) rank;
-    int i, j, total_rows;
+    int i, j;
     int first_i, last_i;
     int row, col;
+    double row_sum;
     double val;
 
     first_i = my_rank * tasks_per_thread;
     last_i = first_i + tasks_per_thread;
 
-    if (last_i > (csrm_global_ptr->num_nonzeros - leftovers)) last_i++;
+    if (last_i >= (csrm_global_ptr->num_rows - leftovers)) last_i++;
+    
+    #ifdef DEBUG
+    cout << "thread rank: " << my_rank << endl;
+    cout << "first_i: " << first_i << endl;
+    cout << "last_i: " << last_i << endl;
+    #endif
 
     for (i=first_i; i<last_i; i++) {
         row = i;
+        row_sum = 0.0;
         for (j=csrm_global_ptr->row_ptr[i]; j<csrm_global_ptr->row_ptr[i+1]; j++) {
             col = csrm_global_ptr->col_idx[j];
             val = csrm_global_ptr->values[j];
 
-            while (flags[row] != 0);
-            flags[row] = 1;
-            result_ptr->at(row) += val * vp->at(col);
-            flags[row] = 0;
+            row_sum += val * vp->at(col);
 
-            #ifdef DEBUG
-            cout << "thread rank: " << my_rank << endl;
-            cout << row << "   " << col << "   " << val << endl;
-            #endif
+            // #ifdef DEBUG
+            // cout << "thread rank: " << my_rank << endl;
+            // cout << row << "   " << col << "   " << val << endl;
+            // #endif
         }
+
+        result[row] += row_sum;
     }
 
 } /* void* ThreadRoutine */
@@ -231,32 +238,43 @@ void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
     long thread;
 
     num_threads = thread_count;
-    pthread_t thread_handles[num_threads];
+
+    #ifdef DEBUG
+    cout << "num_threads " << num_threads << endl;
+    #endif
+
+    pthread_t thread_handles[thread_count];
+    // mutexes = new pthread_mutex_t[csrm->num_rows];
     csrm_global_ptr = csrm;
     vp = &v;
-    total_rows  = csrm->num_rows;
-    flags = new int[total_rows];
-    for (int i=0; i<total_rows; i++)
-        flags[i] = 0;
+    total_rows = csrm->num_rows;
 
-    entries = csrm_global_ptr->num_nonzeros;
-    leftovers = entries % num_threads;
-    tasks_per_thread = entries / num_threads;
+    leftovers = total_rows % num_threads;
+    tasks_per_thread = total_rows / num_threads;
 
-    result_ptr->reserve(total_rows);
-    result_ptr->assign(total_rows, 0.0);
+    #ifdef DEBUG
+    cout << "tasks per thread: " << tasks_per_thread << endl;
+    #endif
 
-    for (thread=0; thread<num_threads; thread++) 
-        pthread_create(&thread_handles[thread], NULL, ThreadRoutine, (void*) thread);
+    result.reserve(total_rows);
+    result.assign(total_rows, 0.0);
 
-    for (thread=0; thread<num_threads; thread++)
-        pthread_join(thread_handles[thread], NULL);
+    int ret;
+
+    for (thread=0; thread<thread_count; thread++) {
+        ret = pthread_create(&thread_handles[thread], NULL, ThreadRoutine, (void*) thread);
+        if (ret!=0) {
+            cerr << "thread issue\n";
+            exit(0);
+        }
+    }
+
+    for (thread=0; thread<thread_count; thread++)
+        ret = pthread_join(thread_handles[thread], NULL);
 
     fout.open(output);
-    for (auto i: *result_ptr) {
-        fout << i << endl;
-    }
+    for (const auto &e : result) fout << e << "\n";
     fout.close();
 
-    delete[] flags;
+    // delete[] mutexes;
 }

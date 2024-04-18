@@ -1,5 +1,5 @@
 /*
-    Compile:    g++ -g -Wall -fopenmp csr_main.cpp csr_matrix.cpp vector.cpp -o csr_test
+    Compile:    g++ -g -Wall -fopenmp -pthread csr_main.cpp csr_matrix.cpp vector.cpp -o csr_test
     Run:        ./csr_test <matrix file> <vector file>
     Flags:      -DDEBUG prints labels as processes occur within the program
 
@@ -27,13 +27,15 @@ int main(int argc, char* argv[]) {
     vector<double> v;
     char* out_serial;
     char* out_omp;
+    char* out_pth;
     long num_threads;
 
     csrm = csr_matrix_create(argv[1]);
     v = CreateVectorFromFile(argv[2]);
     out_serial = "output_csr_serial.txt";
     out_omp = "output_csr_omp.txt";
-    num_threads = 2;
+    out_pth = "output_csr_pth.txt";
+    num_threads = 3;
 
     // #ifdef DEBUG
     // int i=0;
@@ -70,7 +72,6 @@ int main(int argc, char* argv[]) {
     csr_serial_spmv(csrm, v, out_serial);
     GET_TIME(finish);
     elapsed = finish - start;
-
     cout << "csr_serial_spmv performance: " << elapsed << endl;
 
     GET_TIME(start);
@@ -78,6 +79,12 @@ int main(int argc, char* argv[]) {
     GET_TIME(finish);
     elapsed = finish - start;
     cout << "csr_omp_spm performance: " << elapsed << endl;
+
+    GET_TIME(start);
+    csr_pth_spmv(csrm, v, out_pth, num_threads);
+    GET_TIME(finish);
+    elapsed = finish - start;
+    cout << "csr_pth_spmv performance: " << elapsed << endl;
 
     delete csrm;
     

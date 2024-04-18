@@ -68,7 +68,15 @@ struct CSRMatrix : SparseMatrix
         int maxRowSize = 0;
         for (int i = 0; i < numRows; ++i)
         {
-            int rowSize = rowPointers[i + 1] - rowPointers[i];
+            int rowSize = 0;
+            for (int j = 0; j < maxRowSize; j++)
+            {
+                int index = i * maxRowSize + j;
+                if (colIndices[index] != -1)
+                {
+                    rowSize++;
+                }
+            }
             if (rowSize > maxRowSize)
             {
                 maxRowSize = rowSize;
@@ -114,6 +122,7 @@ struct ELLMatrix : SparseMatrix
 {
     std::vector<double> values;
     std::vector<int> colIndices;
+    std::vector<int> rowSizes;
     int numRows;
     int maxRowSize;
 
@@ -126,7 +135,7 @@ struct ELLMatrix : SparseMatrix
             for (int j = 0; j < maxRowSize; ++j)
             {
                 int index = i * maxRowSize + j;
-                if (colIndices[index] != -1)
+                if (index < numRows * maxRowSize && colIndices[index] != -1)
                 {
                     rowSize++;
                 }
@@ -141,10 +150,11 @@ struct ELLMatrix : SparseMatrix
 
     ELLMatrix(int nRows, int maxRSize) : numRows(nRows), maxRowSize(maxRSize)
     {
-        values.resize(numRows * maxRowSize);
-        colIndices.resize(numRows * maxRowSize);
-        std::fill(values.begin(), values.end(), 0);
-        std::fill(colIndices.begin(), colIndices.end(), -1);
+    values.resize(numRows * maxRowSize);
+    colIndices.resize(numRows * maxRowSize);
+    rowSizes.resize(numRows, 0);
+    std::fill(values.begin(), values.end(), 0);
+    std::fill(colIndices.begin(), colIndices.end(), -1);
     }
 
     void addValue(int row, int col, double val, int position)
@@ -152,6 +162,9 @@ struct ELLMatrix : SparseMatrix
         int index = row * maxRowSize + position;
         values[index] = val;
         colIndices[index] = col;
+        if (position >= rowSizes[row]) {
+            rowSizes[row] = position + 1;
+        }
     }
 
     void multiply(const Vector& vec, Vector& result) const override
@@ -163,8 +176,9 @@ struct ELLMatrix : SparseMatrix
             for (int j = 0; j < maxRowSize; ++j)
             {
                 int index = i * maxRowSize + j;
-                if (colIndices[index] != -1)
+                if (j < rowSizes[i])
                 {
+                    std::cout << "Index: " << index << ", Col Index: " << colIndices[index] << ", Value: " << values[index] << ", Sum: " << sum << std::endl;
                     sum += values[index] * vec.elements[colIndices[index]];
                 }
             }
@@ -186,6 +200,7 @@ struct ParallelCSRMatrix : CSRMatrix
                 int index = i * getMaxRowSize() + j;
                 if (colIndices[index] != -1)
                 {
+                    std::cout << "Index: " << index << ", Col Index: " << colIndices[index] << ", Value: " << values[index] << ", Sum: " << sum << std::endl;
                     sum += values[index] * vec.elements[colIndices[index]];
                 }
             }
@@ -196,6 +211,8 @@ struct ParallelCSRMatrix : CSRMatrix
 
 struct ParallelELLMatrix : ELLMatrix
 {
+    std::vector<int> rowSizes;
+
     void multiply(const Vector& vec, Vector& result) const override
     {
         for (int i = 0; i < numRows; ++i)
@@ -204,8 +221,9 @@ struct ParallelELLMatrix : ELLMatrix
             for (int j = 0; j < maxRowSize; ++j)
             {
                 int index = i * maxRowSize + j;
-                if (colIndices[index] != -1)
-                {
+                if (j < rowSizes[i])
+                {   
+                    std::cout << "Index: " << index << ", Col Index: " << colIndices[index] << ", Value: " << values[index] << ", Sum: " << sum << std::endl;
                     sum += values[index] * vec.elements[colIndices[index]];
                 }
             }
