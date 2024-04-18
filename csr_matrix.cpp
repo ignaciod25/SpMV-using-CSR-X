@@ -3,6 +3,8 @@
 #include <string>
 #include <omp.h>
 #include <pthread.h>
+#include <bits/stdc++.h>
+#include <sstream>
 #include "sparse_matrices.h"
 
 using namespace std;
@@ -37,8 +39,16 @@ CSRMatrix* csr_matrix_create(char* filename) {
     cout << banner << endl;
     #endif
 
-    fin >> total_rows >> total_cols >> entries;
-    
+    while (banner.find("%") != string::npos) getline(fin, banner);
+    stringstream ss(banner);
+    string int_val;
+    ss >> int_val;
+    total_rows = stoi(int_val);
+    ss >> int_val;
+    total_cols = stoi(int_val);
+    ss >> int_val;
+    entries = stoi(int_val);
+
     #ifdef DEBUG
     printf("rows: %d, cols: %d, entries: %d\n", total_rows, total_cols, entries);
     #endif
@@ -129,9 +139,9 @@ void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output) {
             val = csrm->values[j];
             result[row] += val * v[col];
 
-            #ifdef DEBUG
-            cout << row << "   " << col << "   " << val << endl;
-            #endif
+            // #ifdef DEBUG
+            // cout << row << "   " << col << "   " << val << endl;
+            // #endif
         }
     }
 
@@ -165,9 +175,9 @@ void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
             val = csrm->values[j];
             result[row] += val * v[col];
 
-            #ifdef DEBUG
-            cout << row << "   " << col << "   " << val << endl;
-            #endif
+            // #ifdef DEBUG
+            // cout << row << "   " << col << "   " << val << endl;
+            // #endif
         }
     }
 

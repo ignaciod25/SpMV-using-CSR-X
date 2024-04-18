@@ -35,41 +35,42 @@ int main(int argc, char* argv[]) {
     out_omp = "output_csr_omp.txt";
     num_threads = 2;
 
-    #ifdef DEBUG
-    int i=0;
-    int j=0;
-    int col, row;
-    double val;
-    while (i<csrm->num_rows) {
-        row = i;
-        while (j<csrm->row_ptr[i+1]) {
-            col = csrm->col_idx[j];
-            val = csrm->values[j];
+    // #ifdef DEBUG
+    // int i=0;
+    // int j=0;
+    // int col, row;
+    // double val;
+    // while (i<csrm->num_rows) {
+    //     row = i;
+    //     while (j<csrm->row_ptr[i+1]) {
+    //         col = csrm->col_idx[j];
+    //         val = csrm->values[j];
             
-            printf("%d, %d, %lg\n", row, col, val);
+    //         printf("%d, %d, %lg\n", row, col, val);
             
-            j++;
-        }  
-        i++;
-    }
-    #endif
+    //         j++;
+    //     }  
+    //     i++;
+    // }
+    // #endif
 
     #ifdef DEBUG
     cout << "size of matrix (num rows/cols): " << csrm->num_rows << endl;
     cout << "size of vector: " << v.size() << endl;
 
-    cout << "vector v: \n";
-    for (auto i: v)
-        cout << i << ", ";
-    cout << endl;
+    // cout << "vector v: \n";
+    // for (auto i: v)
+    //     cout << i << ", ";
+    // cout << endl;
+    #endif
 
     cout << "performing serial spmv.................." << endl;
-    #endif
 
     GET_TIME(start);
     csr_serial_spmv(csrm, v, out_serial);
     GET_TIME(finish);
     elapsed = finish - start;
+
     cout << "csr_serial_spmv performance: " << elapsed << endl;
 
     GET_TIME(start);

@@ -9,7 +9,7 @@
 
 int main() {
 
-    vector<double> v = CreateRandomVector(7, "vector7");
+    vector<double> v = CreateRandomVector(800, "G9.mtx.vector.txt");
     cout << "size of vector: " << v.size() << endl;
 
     for (auto i: v) cout << i << endl;
