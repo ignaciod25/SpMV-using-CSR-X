@@ -114,6 +114,8 @@ int main() {
         csv_file << e << "," << num_rows << "," << num_cols << ",";
         csv_file << num_nonzeros << "," << (double)num_nonzeros / num_rows << ",";
         csv_file << "csr_pth_spmv" << "," << 4 << "," << elapsed << "\n";
+
+        cin.get();
         
         delete csrm_ptr;
         i++;

@@ -41,13 +41,9 @@ CSRMatrix* csr_matrix_create(char* filename) {
 
     while (banner.find("%") != string::npos) getline(fin, banner);
     stringstream ss(banner);
-    string int_val;
-    ss >> int_val;
-    total_rows = stoi(int_val);
-    ss >> int_val;
-    total_cols = stoi(int_val);
-    ss >> int_val;
-    entries = stoi(int_val);
+    ss >> total_rows;
+    ss >> total_cols;
+    ss >> entries;
 
     #ifdef DEBUG
     printf("rows: %d, cols: %d, entries: %d\n", total_rows, total_cols, entries);
