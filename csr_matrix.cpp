@@ -33,9 +33,7 @@ CSRMatrix* csr_matrix_create(char* filename) {
     while (banner.find("%") != string::npos) getline(fin, banner);
     stringstream ss(banner);
     string rows, cols, ent;
-    ss >> rows;
-    ss >> cols;
-    ss >> ent;
+    ss >> rows >> cols >> ent;
     total_rows = atoi(rows.c_str());
     total_cols = atoi(cols.c_str());
     entries = atoi(ent.c_str());

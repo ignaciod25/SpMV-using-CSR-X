@@ -1,0 +1,30 @@
+SPMV Performance
+Matrix,Rows,Columns,NNZ,NNZ/Rows,SPMV Function,Thread Count,Time
+G9.mtx,800,800,19176,23.97,csr_serial_spmv,1,0.00504899
+G9.mtx,800,800,19176,23.97,csr_omp_spmv,2,0.00509596
+G9.mtx,800,800,19176,23.97,csr_omp_spmv,4,0.0326791
+G9.mtx,800,800,19176,23.97,csr_omp_spmv,6,0.0102999
+G9.mtx,800,800,19176,23.97,csr_pth_spmv,2,0.00946403
+G9.mtx,800,800,19176,23.97,csr_pth_spmv,4,0.010287
+G9.mtx,800,800,19176,23.97,csr_pth_spmv,4,0.010289
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_serial_spmv,1,0.0144229
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_omp_spmv,2,0.0155721
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_omp_spmv,4,0.0332129
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_omp_spmv,6,0.013613
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_pth_spmv,2,0.0141189
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_pth_spmv,4,0.013994
+Goodwin_013.mtx,1965,1965,56069,28.5338,csr_pth_spmv,4,0.01318
+abtaha1.mtx,14596,209,51307,3.51514,csr_serial_spmv,1,0.0906889
+abtaha1.mtx,14596,209,51307,3.51514,csr_omp_spmv,2,0.0914121
+abtaha1.mtx,14596,209,51307,3.51514,csr_omp_spmv,4,0.106698
+abtaha1.mtx,14596,209,51307,3.51514,csr_omp_spmv,6,0.091254
+abtaha1.mtx,14596,209,51307,3.51514,csr_pth_spmv,2,0.09355
+abtaha1.mtx,14596,209,51307,3.51514,csr_pth_spmv,4,0.097254
+abtaha1.mtx,14596,209,51307,3.51514,csr_pth_spmv,4,0.095067
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_serial_spmv,1,0.011791
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_omp_spmv,2,0.011601
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_omp_spmv,4,0.020278
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_omp_spmv,6,0.021884
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_pth_spmv,2,0.023114
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_pth_spmv,4,0.013272
+adder_dcop_66.mtx,1813,1813,11246,6.20298,csr_pth_spmv,4,0.00876689

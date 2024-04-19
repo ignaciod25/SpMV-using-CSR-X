@@ -14,7 +14,7 @@ int main() {
         "G9.mtx",
         "Goodwin_013.mtx",
         "abtaha1.mtx",
-        "adder_dcop_66.mtx",
+        "adder_dcop_66.mtx"
     });
 
     vector<double> v;
@@ -112,6 +112,7 @@ int main() {
         delete csrm_ptr;
         i++;
         
+        cout << "-----" << e << endl;
     }
 
     csv_file.close();
