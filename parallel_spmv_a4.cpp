@@ -9,14 +9,6 @@
 */
 
 #include "sparse_matrices.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <omp.h>
-#include <pthread.h>
-#include <bits/stdc++.h>
-#include <sstream>
-#include <vector>
 #include "timer.h"
 
 using namespace std;
@@ -36,16 +28,14 @@ int main(int argc, char* argv[]) {
         cerr << "Max Threads = 1024 is 1024\n";
         exit(0);
     }
-    char* matrixFile = argv[2];
-    char* vectorFile = argv[3];
-    char* outputFile = argv[4];
+    char* matrixFile = argv[4];
+    char* vectorFile = argv[5];
+    char* outputFile = argv[6];
 
     CSRMatrix * csrm;
 
     if (matrixFormat == "csr" || matrixFormat == "CSR") {
         csrm = csr_matrix_create(matrixFile);
-        cout << csrm->num_rows << "  " << csrm->num_cols << "  " << csrm->num_nonzeros << endl;
-
     } else {
         cerr << "Matrix Format: either 'csr' or 'ell'\n";
         exit(0);
@@ -57,19 +47,19 @@ int main(int argc, char* argv[]) {
     if (parallelMethod == "omp" || parallelMethod == "OMP") {
         if (csrm->num_rows > 0) {
             csr_omp_spmv(csrm, v, outputFile, numThreads);
-            cout << csrm->num_rows << "  " << csrm->num_cols << "  " << csrm->num_nonzeros << endl;
         }
 
     } else if (parallelMethod == "pth" || parallelMethod == "PTH") {
-        if (csrm->num_rows > 0) {
+        if (csrm->row_ptr.size() > 0) {
             csr_pth_spmv(csrm, v, outputFile, numThreads);
         }
+
     } else {
         cerr << "Parallelization Method: either 'omp' or 'pth'\n";
-        if (csrm->num_rows > 0) delete csrm;
+        if (csrm->row_ptr.size() > 0) delete csrm;
         exit(0);
     }
 
-    if (csrm) delete csrm;
+    if (csrm->row_ptr.size() > 0) delete csrm;
     return 0;
 } /* int main */

@@ -66,8 +66,6 @@ int main(int argc, char* argv[]) {
     // cout << endl;
     #endif
 
-    cout << "performing serial spmv.................." << endl;
-
     GET_TIME(start);
     csr_serial_spmv(csrm, v, out_serial);
     GET_TIME(finish);

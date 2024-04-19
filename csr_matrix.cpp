@@ -1,14 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <omp.h>
-#include <pthread.h>
-#include <bits/stdc++.h>
-#include <sstream>
-#include <vector>
 #include "sparse_matrices.h"
-
-using namespace std;
 
 /* Global Variable for pthread functions */
 long num_threads;
@@ -48,7 +38,7 @@ CSRMatrix* csr_matrix_create(char* filename) {
     ss >> ent;
     total_rows = atoi(rows.c_str());
     total_cols = atoi(cols.c_str());
-    entries = atoi(cols.c_str());
+    entries = atoi(ent.c_str());
 
     #ifdef DEBUG
     printf("rows: %d, cols: %d, entries: %d\n", total_rows, total_cols, entries);
