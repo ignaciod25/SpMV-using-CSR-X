@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <bits/stdc++.h>
 #include <sstream>
+#include <vector>
 #include "sparse_matrices.h"
 
 using namespace std;
@@ -41,9 +42,13 @@ CSRMatrix* csr_matrix_create(char* filename) {
 
     while (banner.find("%") != string::npos) getline(fin, banner);
     stringstream ss(banner);
-    ss >> total_rows;
-    ss >> total_cols;
-    ss >> entries;
+    string rows, cols, ent;
+    ss >> rows;
+    ss >> cols;
+    ss >> ent;
+    total_rows = atoi(rows.c_str());
+    total_cols = atoi(cols.c_str());
+    entries = atoi(cols.c_str());
 
     #ifdef DEBUG
     printf("rows: %d, cols: %d, entries: %d\n", total_rows, total_cols, entries);

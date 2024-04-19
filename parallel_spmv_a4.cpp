@@ -4,7 +4,8 @@
     ./exec csr omp 3 matrix.mtx vect.txt out1.txt
     ./exec x pth 5 matrix.mtx vect.txt out2.txt
 
-    Compile: g++ -g -Wall -fopenmp -pthread parallel_spmv_a4.cpp csr_matrix.cpp vector.cpp -o parallel_test
+    Compile: 
+    g++ -g -Wall -fopenmp -pthread parallel_spmv_a4.cpp csr_matrix.cpp vector.cpp -o parallel_test
 */
 
 #include "sparse_matrices.h"
