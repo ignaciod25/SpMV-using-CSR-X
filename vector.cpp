@@ -34,15 +34,12 @@ vector<double> CreateVectorFromFile(char* filename) {
 vector<double> CreateRandomVector(int size, char* outfile) {
     vector<double> v;
     ofstream fout;
-    string path("vectors/");
-    path.append(string(outfile));
-    const char* out = path.c_str();
 
     v.reserve(size);
     v.assign(size, 0.0);
     srand(time(0));
     
-    fout.open(out);
+    fout.open(outfile);
     for (int i=0; i<size; i++) {
         v[i] = rand() % 1000;
         fout << v[i] << endl;

@@ -1,6 +1,6 @@
 /*
     Compile:    g++ -g -Wall -fopenmp -pthread csr_benchmark_testing.cpp csr_matrix.cpp vector.cpp -o test
-    Run:        ./test
+    Run:        ./test <csv file for results> <list of mtxfile names>
 */
 
 #include "sparse_matrices.h"
@@ -9,19 +9,30 @@
 #include <string>
 #include "timer.h"
 
-int main() {
+int main(int argc, char* arv[]) {
+    if (argc != 3) {
+        cerr << "Usage: ./test <csv file for results> <list of mtxfile names>\n";
+        exit(0);
+    }
+
     vector<string> files({
+        "494_bus.mtx",
         "G9.mtx",
         "Goodwin_013.mtx",
         "abtaha1.mtx",
-        "adder_dcop_66.mtx"
+        "adder_dcop_66.mtx",
+        "bp_800.mtx", 
+        "brainpc2.mtx", 
+        "coater1.mtx",
+        "lp_qap12.mtx", 
+        "t60k.mtx"
     });
 
     vector<double> v;
     CSRMatrix** csrms = (CSRMatrix**)malloc(sizeof(CSRMatrix) * files.size());
     CSRMatrix* csrm_ptr;
     string file;
-    string v_out;
+    string v_file;
     string out;
     long thread_count;
 
@@ -29,7 +40,6 @@ int main() {
     double start, finish, elapsed;
 
     ofstream csv_file("test_outputs/test_results.csv");
-    csv_file << "SPMV Performance\n";
     csv_file << "Matrix,Rows,Columns,NNZ,NNZ/Rows,SPMV Function,Thread Count,Time\n";
     // there should be 8 columns in each entry
 
@@ -42,8 +52,8 @@ int main() {
         num_cols = csrm_ptr->num_cols;
         num_nonzeros = csrm_ptr->num_nonzeros;
 
-        v_out = "vectors/" + file + ".vector.txt";
-        v = CreateRandomVector(num_cols, (char*)v_out.c_str());
+        v_file = "vectors/" + e + ".vector.txt";
+        v = CreateVectorFromFile((char*)v_file.c_str());
 
         csv_file << e << "," << num_rows << "," << num_cols << ",";
         csv_file << num_nonzeros << "," << (double)num_nonzeros / num_rows << ",";
@@ -109,6 +119,9 @@ int main() {
         csv_file << num_nonzeros << "," << (double)num_nonzeros / num_rows << ",";
         csv_file << "csr_pth_spmv" << "," << 4 << "," << elapsed << "\n";
         
+        csrm_ptr->row_ptr.clear();
+        csrm_ptr->col_idx.clear();
+        csrm_ptr->values.clear();
         delete csrm_ptr;
         i++;
         
