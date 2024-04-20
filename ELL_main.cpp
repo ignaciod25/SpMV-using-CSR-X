@@ -1,4 +1,5 @@
 /*
+
 This code implements sparse matrix-vector multiplication using two formats: 
 Compressed Sparse Row (CSR) and Ellpack-Itpack (ELL). 
 It reads a sparse matrix and a vector from files, performs the multiplication, and writes the result to an output file. 

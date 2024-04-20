@@ -105,6 +105,11 @@ CSRMatrix* csr_matrix_create(char* filename) {
         row_num_values[row]--;
         i++;
     }
+
+    coo_row_indices.clear();
+    coo_col_indices.clear();
+    coo_data.clear();
+    row_num_values.clear();
     
     return csrm;
 } /* CSRMatrix* csr_matrix_create */
@@ -138,8 +143,9 @@ void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output) {
     for (auto i: result) {
         fout << i << endl;
     }
-    
     fout.close();
+
+    result.clear();
 
 } /* void csr_serial_spmv */
 
@@ -174,9 +180,9 @@ void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
     for (auto i: result) {
         fout << i << endl;
     }
-    
     fout.close();
 
+    result.clear();
 } /* void csr_omp_spmv*/
 
 void* ThreadRoutine(void* rank) {
@@ -270,4 +276,5 @@ void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_c
     }
     fout.close();
 
+    result.clear();
 }

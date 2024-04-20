@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     out_serial = "output_csr_serial.txt";
     out_omp = "output_csr_omp.txt";
     out_pth = "output_csr_pth.txt";
-    num_threads = 3;
+    num_threads = 6;
 
     // #ifdef DEBUG
     // int i=0;
