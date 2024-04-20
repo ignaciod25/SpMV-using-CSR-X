@@ -342,6 +342,7 @@ int main(int argc, char** argv)
     else if (matrixFormat == "ELL")
     {
         matrix = MMIO::readMatrix(matrixFile, "ELL");
+        
     }
     else
     {

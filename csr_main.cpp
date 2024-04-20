@@ -6,6 +6,7 @@
     This program will result in two output files: 
     - output_csr_serial.txt
     - output_csr_omp.txt
+    - output_csr_pth.txt
                 
 */
 
@@ -57,7 +58,7 @@ int main(int argc, char* argv[]) {
     // #endif
 
     #ifdef DEBUG
-    cout << "size of matrix (num rows/cols): " << csrm->num_rows << endl;
+    cout << "size of matrix (num rows): " << csrm->num_rows << endl;
     cout << "size of vector: " << v.size() << endl;
 
     // cout << "vector v: \n";
@@ -84,6 +85,9 @@ int main(int argc, char* argv[]) {
     elapsed = finish - start;
     cout << "csr_pth_spmv performance: " << elapsed << endl;
 
+    csrm->row_ptr.clear();
+    csrm->col_idx.clear();
+    csrm->values.clear();
     delete csrm;
     
     return 0;

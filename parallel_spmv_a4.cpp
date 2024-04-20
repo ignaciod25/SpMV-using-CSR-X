@@ -6,6 +6,7 @@
 
     Compile: 
     g++ -g -Wall -fopenmp -pthread parallel_spmv_a4.cpp csr_matrix.cpp vector.cpp -o parallel_test
+    
 */
 
 #include "sparse_matrices.h"

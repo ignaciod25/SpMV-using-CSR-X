@@ -28,7 +28,25 @@ typedef struct CSRMATRIX {
 CSRMatrix* csr_matrix_create(char* filename); // create matrix from mtx file, will need to delete matrix ptr after creation
 void csr_serial_spmv(CSRMatrix* csrm, vector<double> v, char* output);
 void csr_omp_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
-void csr_pth_spmv(CSRMATRIX* csrm, vector<double> v, char* output, long thread_count);
+void csr_pth_spmv(CSRMatrix* csrm, vector<double> v, char* output, long thread_count);
+
+// ell struct
+typedef struct ELLMATRIX {
+    vector<double> values; // array of num_rows * MaxRowSize elements
+    vector<int> col_idx; // array of num_rows * MaxRowSize elements
+    int MaxRowSize;
+    int num_rows;
+    int num_cols;
+    int num_nonzeros;
+} ELLMatrix;
+
+/* ELL matrix functions in ell_matrix.cpp */
+// function to initialize a ELL matrix
+ELLMatrix* ell_matrix_create(char* filename); // create matrix from mtx file, will need to delete matrix ptr after creation
+void ell_serial_spmv(ELLMatrix* ellm, vector<double> v, char* output);
+void ell_omp_spmv(ELLMatrix* ellm, vector<double> v, char* output, long thread_count);
+void ell_pth_spmv(ELLMatrix* ellm, vector<double> v, char* output, long thread_count);
+
 
 /* vector functions in vector.cpp */
 // functions to initialize a vector
