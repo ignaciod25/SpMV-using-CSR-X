@@ -2,9 +2,8 @@
     Compile:    
         g++ -g -Wall -fopenmp -pthread csr_benchmark_testing.cpp csr_matrix.cpp vector.cpp -o test
     Run:        
-        ./test <csv file for results>
+        ./test <csv file for results> <list of matrix file names>
 
-    Decided it was fine to have files listed within the program and stored in a vector.
 */
 
 #include "sparse_matrices.h"
@@ -14,16 +13,16 @@
 #include "timer.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        cerr << "Usage: ./test <csv file for results> \n";
+    if (argc < 3) {
+        cerr << "Usage: ./test <csv file for results> <list of mtx file names>\n";
         exit(0);
     }
 
     vector<string> files({
-        "494_bus.mtx",
-        "Goodwin_013.mtx",
-        "abtaha1.mtx",
-        "adder_dcop_66.mtx",
+        // "494_bus.mtx",
+        // "Goodwin_013.mtx",
+        // "abtaha1.mtx",
+        // "adder_dcop_66.mtx",
         // "G9.mtx",
         // "bp_800.mtx", 
         // "brainpc2.mtx", 
@@ -31,6 +30,9 @@ int main(int argc, char* argv[]) {
         // "lp_qap12.mtx", 
         // "t60k.mtx"
     });
+    for (int i = 2; i < argc; i++) {
+        files.push_back(string(argv[i]));
+    }
 
     vector<double> v;
     CSRMatrix** csrms = (CSRMatrix**)malloc(sizeof(CSRMatrix) * files.size());

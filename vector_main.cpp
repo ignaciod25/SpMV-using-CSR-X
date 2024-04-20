@@ -1,6 +1,8 @@
 /* 
-    Compile:    g++ -g -Wall vector.cpp -fopenmp -pthread csr_matrix.cpp vector_main.cpp -o v_test
-    Run:        ./v_test 
+    Compile:    
+    g++ -g -Wall vector.cpp -fopenmp -pthread csr_matrix.cpp vector_main.cpp -o v_test
+    Run:        
+    ./v_test 
 */
 
 #include "sparse_matrices.h"
@@ -15,11 +17,22 @@ int main() {
         // "Goodwin_013.mtx", 
         // "abtaha1.mtx", 
         // "adder_dcop_66.mtx", 
-        "bp_800.mtx",
-        "brainpc2.mtx", 
-        "coater1.mtx",
-        "lp_qap12.mtx",
-        "t60k.mtx"
+        // "bp_800.mtx",
+        // "brainpc2.mtx", 
+        // "coater1.mtx",
+        // "lp_qap12.mtx",
+        // "t60k.mtx"
+
+        // "model2.mtx", 
+        // "dw8192.mtx", 
+        // "west2021.mtx", 
+        // "west0381.mtx",
+        // "steam1.mtx", 
+        "saylr3.mtx", 
+        "bcsstk01.mtx", 
+        "t2dal_bci.mtx", 
+        "c-26.mtx",
+        "c-35.mtx",
     });
     
     int i, num_cols;
